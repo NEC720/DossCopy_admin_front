@@ -8,6 +8,8 @@ import Inscription from "./pages/inscription/Inscription.jsx";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import OAuthCallback from "./components/OAuthCallback.jsx";
+import VerificationNotice from "./pages/inscription/VerificationNotice.jsx";
+import VerifyEmail from "./pages/inscription/VerifyEmail.jsx";
 
 // Création du client de requêtes
 const queryClient = new QueryClient();
@@ -29,6 +31,14 @@ const router = createBrowserRouter([
   {
     path: "/auth/callback",
     element: <OAuthCallback />,
+  },
+  {
+    path: "/inscription/verification-email",
+    element: <VerificationNotice />,
+  },
+  {
+    path: "/inscription/email-verified",
+    element: <VerifyEmail />,
   },
 ]);
 

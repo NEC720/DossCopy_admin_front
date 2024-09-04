@@ -1,66 +1,66 @@
-// import React from 'react'
-
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
-// import axios from "axios";
+import {
+  Box,
+  Button,
+  Stack,
+  TextField,
+  Typography,
+  IconButton,
+} from "@mui/material";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../../services/api";
 import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/Facebook";
 
+import api from "../../services/api";
+
 function Connexion() {
-  const navigation = useNavigate();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    if (localStorage.getItem("utilisateur")!== null) {
-      navigation("/");
+    if (localStorage.getItem("utilisateur")) {
+      navigate("/");
     }
-  });
+  }, [navigate]);
 
   const {
     register,
     handleSubmit,
-    // formState: { errors },
+    formState: { errors },
   } = useForm();
 
   const onSubmit = (data) => {
-      // A remplacer par l'appel à l'API
-      api
-        .post("/auth/login", data)
-        .then((res) => {
-          // console.log(res, res.data, res.data.user, res.data.authorisation.token);
-          if (res.data.user) {
-            const user = res.data.user;
-            const { token, type } = res.data.authorisation;
+    api
+      .post("/auth/login", data)
+      .then((res) => {
+        if (res.data.user) {
+          const user = res.data.user;
+          const { token, type } = res.data.authorisation;
 
-            const utilisateur = {
-              name: user.name,
-              email: user.email,
-              // ...user,
-              token,
-              type,
-            };
-            console.log(utilisateur);
-            // Sauvegarder l'utilisateur dans le local storage
-            localStorage.setItem("utilisateur", JSON.stringify(utilisateur));
-            toast.success("Connexion réussie !");
-            navigation("/");
-          } else {
-            toast.error("Ce compte n'existe pas");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.error("Erreur lors de la connexion !");
-        });
-
+          const utilisateur = {
+            name: user.name,
+            email: user.email,
+            token,
+            type,
+          };
+          localStorage.setItem("utilisateur", JSON.stringify(utilisateur));
+          toast.success("Connexion réussie !");
+          navigate("/");
+        } else {
+          toast.error("Ce compte n'existe pas");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Erreur lors de la connexion !");
+      });
   };
 
-   const handleOAuthLogin = (provider) => {
-     window.location.href = `http://localhost:8001/redirect/${provider}`; // Remplacez localhost:8000 par l'URL de votre serveur Laravel
-   };
+  const handleOAuthLogin = (provider) => {
+    window.location.href = `http://localhost:8001/redirect/${provider}`;
+  };
 
   return (
     <Stack
@@ -68,29 +68,36 @@ function Connexion() {
       justifyContent={"center"}
       width={"100%"}
       height={"100vh"}
-      bgcolor={"#f5f5f5"}
+      sx={{ background: "linear-gradient(135deg, #e09, #ffeb3b)" }}
     >
       <Box
         width={400}
         sx={{
           backgroundColor: "#fff",
-          padding: 3,
+          padding: 4,
           textAlign: "center",
-          borderRadius: 3,
+          borderRadius: 4,
+          boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <Typography variant="h4" marginBottom={2}>
+        <Typography
+          variant="h4"
+          fontWeight={700}
+          color="primary"
+          marginBottom={3}
+        >
           Connexion
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)} style={{}}>
-          <Stack direction={"column"} gap={2}>
+          <Stack direction={"column"} gap={3}>
             <TextField
-              id="filled-basic"
-              label="Veuillez saisir votre adresse mail"
+              id="email"
+              label="Adresse mail"
               variant="outlined"
               fullWidth
-              size="small"
-              type="email"
+              size="medium"
+              error={Boolean(errors.email)}
+              helperText={errors.email?.message}
               {...register("email", {
                 required: "Veuillez saisir votre adresse mail",
                 minLength: {
@@ -104,12 +111,14 @@ function Connexion() {
               })}
             />
             <TextField
-              id="filled-password"
-              label="Veillez entrez votre not de passe"
+              id="password"
+              label="Mot de passe"
               variant="outlined"
               fullWidth
-              size="small"
+              size="medium"
               type="password"
+              error={Boolean(errors.password)}
+              helperText={errors.password?.message}
               {...register("password", {
                 required: "Veuillez saisir un mot de passe",
                 minLength: {
@@ -117,9 +126,9 @@ function Connexion() {
                   message: "Au moins 8 caractères",
                 },
                 pattern: {
-                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/, //(?=.*[@$!%*?&.]) [... @$!%*?&.]
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
                   message:
-                    "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial",
+                    "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre.",
                 },
               })}
             />
@@ -127,39 +136,49 @@ function Connexion() {
           <Button
             variant="contained"
             sx={{
-              marginTop: 2,
+              marginTop: 3,
+              padding: "12px 0",
+              fontSize: "16px",
+              fontWeight: 600,
+              backgroundColor: "#e09",
+              "&:hover": {
+                backgroundColor: "#d4087d",
+              },
             }}
             type="submit"
+            fullWidth
           >
-            Connecter
+            Connexion
           </Button>
-          <Typography marginTop={2}>
-            Vous n&apos;avez pas de compte? {"  "}
-            <Link to="/inscription">S&apos;inscrire</Link>
+          <Typography
+            marginTop={2}
+            fontSize={"0.9rem"}
+            color={"text.secondary"}
+          >
+            Vous n&apos;avez pas de compte ?{" "}
+            <Link
+              to="/inscription"
+              style={{ color: "#e09", fontWeight: "bold" }}
+            >
+              S&apos;inscrire
+            </Link>
           </Typography>
 
-          <Stack direction="column" spacing={2} marginTop={2}>
-            <Button
-              variant="outlined"
-              startIcon={<GoogleIcon />}
-              onClick={() => handleOAuthLogin("google")}
-            >
-              Se connecter avec Google
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<GitHubIcon />}
-              onClick={() => handleOAuthLogin("github")}
-            >
-              Se connecter avec GitHub
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<LinkedInIcon />}
-              onClick={() => handleOAuthLogin("linkedin")}
-            >
-              Se connecter avec LinkedIn
-            </Button>
+          <Stack
+            direction="row"
+            spacing={1}
+            marginTop={3}
+            justifyContent="center"
+          >
+            <IconButton onClick={() => handleOAuthLogin("google")}>
+              <GoogleIcon sx={{ color: "#DB4437", fontSize: 30 }} />
+            </IconButton>
+            <IconButton onClick={() => handleOAuthLogin("github")}>
+              <GitHubIcon sx={{ color: "#333", fontSize: 30 }} />
+            </IconButton>
+            <IconButton onClick={() => handleOAuthLogin("linkedin")}>
+              <LinkedInIcon sx={{ color: "#0A66C2", fontSize: 30 }} />
+            </IconButton>
           </Stack>
         </form>
       </Box>
