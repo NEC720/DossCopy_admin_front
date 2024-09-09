@@ -5,14 +5,14 @@ import {
   TextField,
   Typography,
   Divider,
-  // Alert,
+  IconButton,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import LinkedInIcon from "@mui/icons-material/LinkedIn"; // Remplacer Facebook par LinkedIn
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import api from "../../services/api";
 
 function Inscription() {
@@ -53,22 +53,20 @@ function Inscription() {
     <Stack
       alignItems="center"
       justifyContent="center"
-      width="100%"
-      height="90%"
-      bgcolor="#f0f4f8"
-      marginTop={"20vh"}
-      marginBottom={"20vh"}
+      width={"100%"}
+      height={"100vh"}
+      sx={{ background: "linear-gradient(135deg, #e09, #ffeb3b)" }} // Identique au composant de connexion
     >
       <Box
-        width={{ xs: 300, sm: 400 }}
+        width={400}
+        // height={"100vh"}
         sx={{
           backgroundColor: "#ffffff",
           padding: 4,
           borderRadius: 3,
           boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.1)",
           textAlign: "center",
-          // marginTop: "10vh",
-          // marginBottom: "10vh",
+          height: "70%",
         }}
       >
         <Typography
@@ -89,7 +87,7 @@ function Inscription() {
               label="Nom complet"
               variant="outlined"
               fullWidth
-              size="medium"
+              size="small"
               error={!!errors.name}
               helperText={errors.name ? errors.name.message : ""}
               {...register("name", {
@@ -104,7 +102,7 @@ function Inscription() {
               label="Adresse email"
               variant="outlined"
               fullWidth
-              size="medium"
+              size="small"
               type="email"
               error={!!errors.email}
               helperText={errors.email ? errors.email.message : ""}
@@ -120,7 +118,7 @@ function Inscription() {
               label="Mot de passe"
               variant="outlined"
               fullWidth
-              size="medium"
+              size="small"
               type="password"
               error={!!errors.password}
               helperText={errors.password ? errors.password.message : ""}
@@ -138,7 +136,7 @@ function Inscription() {
               label="Confirmer le mot de passe"
               variant="outlined"
               fullWidth
-              size="medium"
+              size="small"
               type="password"
               error={!!errors.password_confirmation}
               helperText={
@@ -154,7 +152,15 @@ function Inscription() {
           <Button
             variant="contained"
             color="primary"
-            sx={{ marginTop: 3, padding: 1.5, fontSize: "16px" }}
+            sx={{
+              marginTop: 3,
+              padding: 1.5,
+              fontSize: "16px",
+              backgroundColor: "#e09",
+              "&:hover": {
+                backgroundColor: "#d4087d",
+              },
+            }}
             type="submit"
             fullWidth
           >
@@ -164,31 +170,22 @@ function Inscription() {
 
         <Divider sx={{ marginY: 3 }}>ou</Divider>
 
-        <Stack direction="column" spacing={2}>
-          <Button
-            variant="outlined"
-            startIcon={<GoogleIcon />}
-            onClick={() => handleOAuthLogin("google")}
-            fullWidth
-          >
-            Continuer avec Google
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<GitHubIcon />}
-            onClick={() => handleOAuthLogin("github")}
-            fullWidth
-          >
-            Continuer avec GitHub
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<LinkedInIcon />}
-            onClick={() => handleOAuthLogin("linkedin")}
-            fullWidth
-          >
-            Continuer avec LinkedIn
-          </Button>
+        {/* Section des providers OAuth */}
+        <Stack
+          direction="row"
+          spacing={1}
+          marginTop={3}
+          justifyContent="center"
+        >
+          <IconButton onClick={() => handleOAuthLogin("google")}>
+            <GoogleIcon sx={{ color: "#DB4437", fontSize: 30 }} />
+          </IconButton>
+          <IconButton onClick={() => handleOAuthLogin("github")}>
+            <GitHubIcon sx={{ color: "#333", fontSize: 30 }} />
+          </IconButton>
+          <IconButton onClick={() => handleOAuthLogin("linkedin")}>
+            <LinkedInIcon sx={{ color: "#0A66C2", fontSize: 30 }} />
+          </IconButton>
         </Stack>
 
         <Typography variant="body2" color="textSecondary" sx={{ marginTop: 3 }}>
@@ -196,6 +193,7 @@ function Inscription() {
           <Button
             variant="text"
             color="primary"
+            style={{ color: "#e09", fontWeight: "bold" }}
             onClick={() => navigate("/connexion")}
           >
             Connexion
